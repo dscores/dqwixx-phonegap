@@ -1,0 +1,18 @@
+{
+  "name": "dqwixx-phonegap",
+  "description": "",
+  "version": "1.0.0",
+  "homepage": "http://github.com/dscores/dqwixx-phonegap",
+  "private": true,
+  "scripts": {
+    "postinstall": "dphonegap dqwixx"
+  },
+  "dependencies": {
+    "dphonegap": "^1.0.0",
+    "dqwixx": "dscores/dqwixx"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dscores/dqwixx-phonegap.git"
+  }
+}
