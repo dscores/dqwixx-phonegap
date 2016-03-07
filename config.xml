@@ -2,4 +2,5 @@
   <name>dqwixx</name>
   <description></description>
   <preference name="orientation" value="landscape"/>
+  <plugin name="nl.x-services.plugins.insomnia" source="pgb" />
 </widget>
