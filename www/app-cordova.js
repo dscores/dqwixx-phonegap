@@ -1,3 +1,3 @@
-document.addEventListener("deviceready",function() {
+document.addEventListener('deviceready', function () {
   window.plugins.insomnia.keepAwake();
 });
