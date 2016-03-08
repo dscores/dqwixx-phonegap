@@ -2,7 +2,12 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minumum-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon/iphone-60x60.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="img/apple-touch-icon/ipad-76x76.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="img/apple-touch-icon/iphone-retina-120x120.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="img/apple-touch-icon/ipad-retina-152x152.png">
   <title>dqwixx</title>
   <meta name="description" content="">
   <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
@@ -16,6 +21,7 @@
 <script src="vendor/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="vendor/riot/riot.min.js"></script>
 <script src="scorecard.js"></script>
+<script src="scorecard-phonegap.js"></script>
 <script>
   riot.mount('scorecard', {});
 </script>

@@ -84,25 +84,34 @@
 .refresh {
   margin-left: 6vmin; }
 
-.portrait {
-  display: none; }
-
-.landscape {
-  display: block; }
-
-@media all and (orientation: portrait) {
-  .portrait {
-    display: block; }
-  .landscape {
-    display: none; } }
-
 html, body, .container-fluid {
   height: 100%; }
 
 .row {
-  display: flex;
-  display: -webkit-flex;
   height: calc(100% / 6); }
+
+@media all and (orientation: portrait) {
+  .container-fluid {
+    -webkit-transform: rotate(90deg);
+    -webkit-transform-origin: top left;
+    -ms-transform: rotate(90deg);
+    -ms-transform-origin: top left;
+    transform: rotate(90deg);
+    transform-origin: top left;
+    position: absolute;
+    top: 0;
+    left: 100%; } }
+
+@media all and (orientation: portrait) {
+  .container-fluid {
+    width: 100vh;
+    height: 100vw; }
+  .row {
+    height: calc(100vw / 6); } }
+
+.row {
+  display: flex;
+  display: -webkit-flex; }
 
 .btn {
   flex: 1;
