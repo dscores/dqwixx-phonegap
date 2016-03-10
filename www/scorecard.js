@@ -184,4 +184,4 @@ riot.tag2('scorecard', '<div class="container-fluid {finished: state.finished}">
   this.clickNumber = function (e) { dqwixx.clickNumber(e.item); };
   this.clickLock = function (e) { dqwixx.clickLock(e.item); };
   this.clickFail = function (e) { dqwixx.clickFail(e.item); };
-}, '{ }');
+});

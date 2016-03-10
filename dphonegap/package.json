@@ -8,7 +8,7 @@
     "postinstall": "dphonegap dqwixx"
   },
   "dependencies": {
-    "dphonegap": "^3.0.0",
+    "dphonegap": "^3.0.1",
     "dqwixx": "dscores/dqwixx"
   },
   "repository": {
