@@ -1,0 +1,20 @@
+[
+  {
+    "source": "node_modules/dragonprojects-logo/logo.png",
+    "path": "../res/icon",
+    "destinations": [
+      { "path": "android/icon-36-ldpi.png", "width": 36 },
+      { "path": "android/icon-48-mdpi.png", "width": 48 },
+      { "path": "android/icon-72-hdpi.png", "width": 72 },
+      { "path": "android/icon-96-xhdpi.png", "width": 96 },
+      { "path": "ios/icon-57-2x.png", "width": 114 },
+      { "path": "ios/icon-57.png", "width": 57 },
+      { "path": "ios/icon-72-2x.png", "width": 144 },
+      { "path": "ios/icon-72.png", "width": 72 },
+      { "path": "windows-phone/icon-48.png", "width": 48 },
+      { "path": "windows-phone/icon-62-tile.png", "width": 62 },
+      { "path": "windows-phone/icon-173-tile.png", "width": 173 },
+      { "path": "icon.png", "width": 128 }
+    ]
+  }
+]

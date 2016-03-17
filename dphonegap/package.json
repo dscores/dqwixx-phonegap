@@ -5,11 +5,16 @@
   "homepage": "http://github.com/dscores/dqwixx-phonegap",
   "private": true,
   "scripts": {
-    "postinstall": "dphonegap dqwixx"
+    "postinstall": "npm-run-all --parallel postinstall:*",
+    "postinstall:dlogos": "dlogos",
+    "postinstall:dphonegap": "dphonegap dqwixx"
   },
   "dependencies": {
-    "dphonegap": "^4.0.0",
-    "dqwixx": "dscores/dqwixx"
+    "dlogos": "^1.1.0",
+    "dphonegap": "^5.0.0",
+    "dqwixx": "dscores/dqwixx",
+    "dragonprojects-logo": "^1.0.0",
+    "npm-run-all": "^1.5.1"
   },
   "repository": {
     "type": "git",
