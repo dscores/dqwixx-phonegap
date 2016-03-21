@@ -10,8 +10,8 @@
     "postinstall:dphonegap": "dphonegap dqwixx"
   },
   "dependencies": {
-    "dlogos": "^1.1.0",
-    "dphonegap": "^5.0.0",
+    "dlogos": "^2.0.0",
+    "dphonegap": "^5.1.0",
     "dqwixx": "dscores/dqwixx",
     "dragonprojects-logo": "^1.0.0",
     "npm-run-all": "^1.5.1"
