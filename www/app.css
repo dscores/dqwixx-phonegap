@@ -1,75 +1,116 @@
-.btn, .btn:hover, .btn:focus {
+.red .btn {
+  background-color: #d9534f;
   color: white; }
-
-.total {
-  background-color: white;
-  border: 1vmin solid black;
-  color: black; }
-
-.red .btn, .red.btn {
-  background-color: #d9534f; }
-  .red .btn:hover, .red.btn:hover {
+  .red .btn:hover {
     background-color: #c9302c; }
-  .red .btn.marked, .red .btn.locked, .red .btn.failed, .red.btn.marked, .red.btn.locked, .red.btn.failed {
+  .red .btn.marked, .red .btn.locked, .red .btn.failed {
     background-color: #761c19; }
-    .red .btn.marked:hover, .red .btn.locked:hover, .red .btn.failed:hover, .red.btn.marked:hover, .red.btn.locked:hover, .red.btn.failed:hover {
+    .red .btn.marked:hover, .red .btn.locked:hover, .red .btn.failed:hover {
       background-color: #4c1210; }
-  .red .btn.skipped, .red.btn.skipped {
+  .red .btn.skipped {
     background-color: #eba5a3; }
-    .red .btn.skipped:hover, .red.btn.skipped:hover {
+    .red .btn.skipped:hover {
       background-color: #e27c79; }
 
-.yellow .btn, .yellow.btn {
-  background-color: #f0ad4e; }
-  .yellow .btn:hover, .yellow.btn:hover {
+.red.btn {
+  background-color: white;
+  border: 1vmin solid #d9534f;
+  color: #d9534f; }
+
+.yellow .btn {
+  background-color: #f0ad4e;
+  color: white; }
+  .yellow .btn:hover {
     background-color: #ec971f; }
-  .yellow .btn.marked, .yellow .btn.locked, .yellow .btn.failed, .yellow.btn.marked, .yellow.btn.locked, .yellow.btn.failed {
+  .yellow .btn.marked, .yellow .btn.locked, .yellow .btn.failed {
     background-color: #985f0d; }
-    .yellow .btn.marked:hover, .yellow .btn.locked:hover, .yellow .btn.failed:hover, .yellow.btn.marked:hover, .yellow.btn.locked:hover, .yellow.btn.failed:hover {
+    .yellow .btn.marked:hover, .yellow .btn.locked:hover, .yellow .btn.failed:hover {
       background-color: #694109; }
-  .yellow .btn.skipped, .yellow.btn.skipped {
+  .yellow .btn.skipped {
     background-color: #f8d9ac; }
-    .yellow .btn.skipped:hover, .yellow.btn.skipped:hover {
+    .yellow .btn.skipped:hover {
       background-color: #f4c37d; }
 
-.green .btn, .green.btn {
-  background-color: #5cb85c; }
-  .green .btn:hover, .green.btn:hover {
+.yellow.btn {
+  background-color: white;
+  border: 1vmin solid #f0ad4e;
+  color: #f0ad4e; }
+
+.green .btn {
+  background-color: #5cb85c;
+  color: white; }
+  .green .btn:hover {
     background-color: #449d44; }
-  .green .btn.marked, .green .btn.locked, .green .btn.failed, .green.btn.marked, .green.btn.locked, .green.btn.failed {
+  .green .btn.marked, .green .btn.locked, .green .btn.failed {
     background-color: #255625; }
-    .green .btn.marked:hover, .green .btn.locked:hover, .green .btn.failed:hover, .green.btn.marked:hover, .green.btn.locked:hover, .green.btn.failed:hover {
+    .green .btn.marked:hover, .green .btn.locked:hover, .green .btn.failed:hover {
       background-color: #163216; }
-  .green .btn.skipped, .green.btn.skipped {
+  .green .btn.skipped {
     background-color: #a3d7a3; }
-    .green .btn.skipped:hover, .green.btn.skipped:hover {
+    .green .btn.skipped:hover {
       background-color: #80c780; }
 
-.blue .btn, .blue.btn {
-  background-color: #337ab7; }
-  .blue .btn:hover, .blue.btn:hover {
+.green.btn {
+  background-color: white;
+  border: 1vmin solid #5cb85c;
+  color: #5cb85c; }
+
+.blue .btn {
+  background-color: #337ab7;
+  color: white; }
+  .blue .btn:hover {
     background-color: #285f8f; }
-  .blue .btn.marked, .blue .btn.locked, .blue .btn.failed, .blue.btn.marked, .blue.btn.locked, .blue.btn.failed {
+  .blue .btn.marked, .blue .btn.locked, .blue .btn.failed {
     background-color: #122a3f; }
-    .blue .btn.marked:hover, .blue .btn.locked:hover, .blue .btn.failed:hover, .blue.btn.marked:hover, .blue.btn.locked:hover, .blue.btn.failed:hover {
+    .blue .btn.marked:hover, .blue .btn.locked:hover, .blue .btn.failed:hover {
       background-color: #071017; }
-  .blue .btn.skipped, .blue.btn.skipped {
+  .blue .btn.skipped {
     background-color: #77acd9; }
-    .blue .btn.skipped:hover, .blue.btn.skipped:hover {
+    .blue .btn.skipped:hover {
       background-color: #4f93ce; }
 
-.fails .btn, .fails.btn {
-  background-color: #aeaeae; }
-  .fails .btn:hover, .fails.btn:hover {
+.blue.btn {
+  background-color: white;
+  border: 1vmin solid #337ab7;
+  color: #337ab7; }
+
+.fails .btn {
+  background-color: #aeaeae;
+  color: white; }
+  .fails .btn:hover {
     background-color: #959595; }
-  .fails .btn.marked, .fails .btn.locked, .fails .btn.failed, .fails.btn.marked, .fails.btn.locked, .fails.btn.failed {
+  .fails .btn.marked, .fails .btn.locked, .fails .btn.failed {
     background-color: #626262; }
-    .fails .btn.marked:hover, .fails .btn.locked:hover, .fails .btn.failed:hover, .fails.btn.marked:hover, .fails.btn.locked:hover, .fails.btn.failed:hover {
+    .fails .btn.marked:hover, .fails .btn.locked:hover, .fails .btn.failed:hover {
       background-color: #484848; }
-  .fails .btn.skipped, .fails.btn.skipped {
+  .fails .btn.skipped {
     background-color: #e1e1e1; }
-    .fails .btn.skipped:hover, .fails.btn.skipped:hover {
+    .fails .btn.skipped:hover {
       background-color: #c8c8c8; }
+
+.fails.btn {
+  background-color: white;
+  border: 1vmin solid #aeaeae;
+  color: #aeaeae; }
+
+.total .btn {
+  background-color: #000000;
+  color: white; }
+  .total .btn:hover {
+    background-color: black; }
+  .total .btn.marked, .total .btn.locked, .total .btn.failed {
+    background-color: black; }
+    .total .btn.marked:hover, .total .btn.locked:hover, .total .btn.failed:hover {
+      background-color: black; }
+  .total .btn.skipped {
+    background-color: #333333; }
+    .total .btn.skipped:hover {
+      background-color: #1a1a1a; }
+
+.total.btn {
+  background-color: white;
+  border: 1vmin solid #000000;
+  color: #000000; }
 
 .btn {
   margin: 2vmin 0.2vmin; }

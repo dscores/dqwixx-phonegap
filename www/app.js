@@ -1,4 +1,4 @@
-riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div each="{state.colors}" class="row {color}"> <button each="{numbers}" ontouchstart="{clickNumber}" onclick="{clickNumber}" class="btn {skipped: skipped, marked: marked, disabled: last && !lockable}"> <span class="{hidden: marked}">{number}</span> <span class="glyphicon glyphicon-remove {hidden: !marked}"></span> </button> <button ontouchstart="{clickLock}" onclick="{clickLock}" class="btn lock {locked: locked}"> <span class="glyphicon glyphicon-lock {hidden: locked}"></span> <span class="glyphicon glyphicon-remove {hidden: !locked}"></span> </button> </div> <div class="row fails"> <button each="{state.fails.fails}" ontouchstart="{clickFail}" onclick="{clickFail}" class="btn {failed: failed}"> <span class="glyphicon glyphicon-ban-circle {hidden: failed}"></span> <span class="glyphicon glyphicon-remove {hidden: !failed}"></span> </button> </div> <div class="row results"> <button each="{state.colors}" class="btn {color}">+ {points}</button> <button class="btn fails">- {state.fails.points}</button> <button class="btn total">= {state.points}</button> <button class="btn btn-info refresh" ontouchstart="{clickRefresh}" onclick="{clickRefresh}"><span class="glyphicon glyphicon-refresh"></span></button> </div> </div>', '', '', function(opts) {
+riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div each="{state.colors}" class="row {color}"> <button each="{numbers}" ontouchstart="{clickNumber(color)}" onclick="{clickNumber(color)}" class="btn {skipped: skipped, marked: marked, disabled: last && !lockable}"> <span class="{hidden: marked}">{number}</span> <span class="glyphicon glyphicon-remove {hidden: !marked}"></span> </button> <button ontouchstart="{clickLock}" onclick="{clickLock}" class="btn lock {locked: locked}"> <span class="glyphicon glyphicon-lock {hidden: locked}"></span> <span class="glyphicon glyphicon-remove {hidden: !locked}"></span> </button> </div> <div class="row fails"> <button each="{state.fails.fails}" ontouchstart="{clickFail}" onclick="{clickFail}" class="btn {failed: failed}"> <span class="glyphicon glyphicon-ban-circle {hidden: failed}"></span> <span class="glyphicon glyphicon-remove {hidden: !failed}"></span> </button> </div> <div class="row results"> <button each="{state.colors}" class="btn {color}">+ {points}</button> <button class="btn fails">- {state.fails.points}</button> <button class="btn total">= {state.points}</button> <button class="btn btn-info refresh" ontouchstart="{clickRefresh}" onclick="{clickRefresh}"><span class="glyphicon glyphicon-refresh"></span></button> </div> </div>', '', '', function(opts) {
 'use strict';
 
 (function () {
@@ -7,12 +7,12 @@ riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div 
     if (order === 'asc') {
       var number;
       for (number = 2; number <= 12; ++number) {
-        color.numbers.push({ color: color, number: number, marked: false, skipped: false, last: number === 12 });
+        color.numbers.push({ number: number, marked: false, skipped: false, last: number === 12 });
       }
     }
     if (order === 'desc') {
       for (number = 12; number >= 2; --number) {
-        color.numbers.push({ color: color, number: number, marked: false, skipped: false, last: number === 2 });
+        color.numbers.push({ number: number, marked: false, skipped: false, last: number === 2 });
       }
     }
     return color;
@@ -63,10 +63,9 @@ riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div 
     state.finished = locked >= 2 || failed >= 4;
   }
 
-  function markNumber(number) {
+  function markNumber(color, number) {
     number.marked = true;
     number.skipped = false;
-    var color = number.color;
     if (number.last && !color.locked) {
       lockColor(color);
     } else {
@@ -80,9 +79,8 @@ riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div 
     }
   }
 
-  function unmarkNumber(number) {
+  function unmarkNumber(color, number) {
     number.marked = false;
-    var color = number.color;
     if (number.last && color.locked) {
       unlockColor(color);
     } else {
@@ -90,7 +88,7 @@ riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div 
       var last = numbers[10];
       var marked = numbers.filter(function (number) { return number.marked }).length;
       if (last.marked && marked <= 5) {
-        unmarkNumber(last);
+        unmarkNumber(color, last);
       }
       for (var i = numbers.length - 1; i >= 0; --i) {
         if (numbers[i].marked) {
@@ -119,7 +117,7 @@ riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div 
     var numbers = color.numbers;
     var last = numbers[numbers.length - 1];
     if (last.marked) {
-      unmarkNumber(last);
+      unmarkNumber(color, last);
     } else {
       for (var i = numbers.length - 1; i >= 0; --i) {
         if (numbers[i].marked) {
@@ -130,17 +128,36 @@ riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div 
     }
   }
 
-  var dqwixx = { state: {} };
+  function storeState(state) {
+    if (state) {
+      localStorage.setItem('dqwixx-state', JSON.stringify(state));
+    } else {
+      localStorage.removeItem('dqwixx-state');
+    }
+  }
 
-  dqwixx.clickNumber = function (number) {
-    var color = number.color;
+  function loadState() {
+    var state = localStorage.getItem('dqwixx-state');
+    if (state) {
+      state = JSON.parse(state);
+    }
+    return state;
+  }
+
+  var dqwixx = { state: loadState() };
+  if (!dqwixx.state) {
+    dqwixx.state = {};
+    refresh(dqwixx.state);
+  }
+
+  dqwixx.clickNumber = function (color, number) {
     if (number.last && !color.lockable) {
       return;
     }
     if (number.marked) {
-      unmarkNumber(number);
+      unmarkNumber(color, number);
     } else {
-      markNumber(number);
+      markNumber(color, number);
     }
     calcColorPoints(color);
     determineLockable(color);
@@ -148,6 +165,7 @@ riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div 
     if (number.last) {
       determineFinished(dqwixx.state);
     }
+    storeState(dqwixx.state);
   };
 
   dqwixx.clickLock = function (color) {
@@ -160,6 +178,7 @@ riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div 
     determineLockable(color);
     calcTotalPoints(dqwixx.state);
     determineFinished(dqwixx.state);
+    storeState(dqwixx.state);
   };
 
   dqwixx.clickFail = function (fail) {
@@ -167,10 +186,12 @@ riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div 
     calcFailPoints(dqwixx.state);
     calcTotalPoints(dqwixx.state);
     determineFinished(dqwixx.state);
+    storeState(dqwixx.state);
   };
 
   dqwixx.clickRefresh = function () {
     refresh(dqwixx.state);
+    storeState();
   };
 
   window.dqwixx = dqwixx;
@@ -178,10 +199,13 @@ riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div 
 
   this.state = dqwixx.state;
 
-  dqwixx.clickRefresh();
+  var colors = {};
+  dqwixx.state.colors.map(function (color) {
+    colors[color.color] = color;
+  });
 
   this.clickRefresh = function () { dqwixx.clickRefresh(); };
-  this.clickNumber = function (e) { dqwixx.clickNumber(e.item); };
+  this.clickNumber = function (color) { return function (e) { dqwixx.clickNumber(colors[color], e.item); }; };
   this.clickLock = function (e) { dqwixx.clickLock(e.item); };
   this.clickFail = function (e) { dqwixx.clickFail(e.item); };
 });
