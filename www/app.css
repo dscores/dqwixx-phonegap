@@ -1,126 +1,128 @@
-.red .btn {
+.red.open {
   background-color: #d9534f;
   color: white; }
-  .red .btn:hover {
-    background-color: #c9302c; }
-  .red .btn.marked, .red .btn.locked, .red .btn.failed {
-    background-color: #761c19; }
-    .red .btn.marked:hover, .red .btn.locked:hover, .red .btn.failed:hover {
-      background-color: #4c1210; }
-  .red .btn.skipped {
-    background-color: #eba5a3; }
-    .red .btn.skipped:hover {
-      background-color: #e27c79; }
+  .red.open:hover {
+    background-color: #c9302c;
+    color: white; }
 
-.red.btn {
+.red.marked, .red.locked, .red.failed {
+  background-color: #761c19;
+  color: white; }
+
+.red.skipped {
+  background-color: #eba5a3;
+  color: white; }
+
+.red.points {
   background-color: white;
   border: 1vmin solid #d9534f;
   color: #d9534f; }
 
-.yellow .btn {
+.yellow.open {
   background-color: #f0ad4e;
   color: white; }
-  .yellow .btn:hover {
-    background-color: #ec971f; }
-  .yellow .btn.marked, .yellow .btn.locked, .yellow .btn.failed {
-    background-color: #985f0d; }
-    .yellow .btn.marked:hover, .yellow .btn.locked:hover, .yellow .btn.failed:hover {
-      background-color: #694109; }
-  .yellow .btn.skipped {
-    background-color: #f8d9ac; }
-    .yellow .btn.skipped:hover {
-      background-color: #f4c37d; }
+  .yellow.open:hover {
+    background-color: #ec971f;
+    color: white; }
 
-.yellow.btn {
+.yellow.marked, .yellow.locked, .yellow.failed {
+  background-color: #985f0d;
+  color: white; }
+
+.yellow.skipped {
+  background-color: #f8d9ac;
+  color: white; }
+
+.yellow.points {
   background-color: white;
   border: 1vmin solid #f0ad4e;
   color: #f0ad4e; }
 
-.green .btn {
+.green.open {
   background-color: #5cb85c;
   color: white; }
-  .green .btn:hover {
-    background-color: #449d44; }
-  .green .btn.marked, .green .btn.locked, .green .btn.failed {
-    background-color: #255625; }
-    .green .btn.marked:hover, .green .btn.locked:hover, .green .btn.failed:hover {
-      background-color: #163216; }
-  .green .btn.skipped {
-    background-color: #a3d7a3; }
-    .green .btn.skipped:hover {
-      background-color: #80c780; }
+  .green.open:hover {
+    background-color: #449d44;
+    color: white; }
 
-.green.btn {
+.green.marked, .green.locked, .green.failed {
+  background-color: #255625;
+  color: white; }
+
+.green.skipped {
+  background-color: #a3d7a3;
+  color: white; }
+
+.green.points {
   background-color: white;
   border: 1vmin solid #5cb85c;
   color: #5cb85c; }
 
-.blue .btn {
+.blue.open {
   background-color: #337ab7;
   color: white; }
-  .blue .btn:hover {
-    background-color: #285f8f; }
-  .blue .btn.marked, .blue .btn.locked, .blue .btn.failed {
-    background-color: #122a3f; }
-    .blue .btn.marked:hover, .blue .btn.locked:hover, .blue .btn.failed:hover {
-      background-color: #071017; }
-  .blue .btn.skipped {
-    background-color: #77acd9; }
-    .blue .btn.skipped:hover {
-      background-color: #4f93ce; }
+  .blue.open:hover {
+    background-color: #285f8f;
+    color: white; }
 
-.blue.btn {
+.blue.marked, .blue.locked, .blue.failed {
+  background-color: #122a3f;
+  color: white; }
+
+.blue.skipped {
+  background-color: #77acd9;
+  color: white; }
+
+.blue.points {
   background-color: white;
   border: 1vmin solid #337ab7;
   color: #337ab7; }
 
-.fails .btn {
+.fail.open {
   background-color: #aeaeae;
   color: white; }
-  .fails .btn:hover {
-    background-color: #959595; }
-  .fails .btn.marked, .fails .btn.locked, .fails .btn.failed {
-    background-color: #626262; }
-    .fails .btn.marked:hover, .fails .btn.locked:hover, .fails .btn.failed:hover {
-      background-color: #484848; }
-  .fails .btn.skipped {
-    background-color: #e1e1e1; }
-    .fails .btn.skipped:hover {
-      background-color: #c8c8c8; }
+  .fail.open:hover {
+    background-color: #959595;
+    color: white; }
 
-.fails.btn {
+.fail.marked, .fail.locked, .fail.failed {
+  background-color: #626262;
+  color: white; }
+
+.fail.skipped {
+  background-color: #e1e1e1;
+  color: white; }
+
+.fail.points {
   background-color: white;
   border: 1vmin solid #aeaeae;
   color: #aeaeae; }
 
-.total .btn {
+.total.open {
   background-color: #000000;
   color: white; }
-  .total .btn:hover {
-    background-color: black; }
-  .total .btn.marked, .total .btn.locked, .total .btn.failed {
-    background-color: black; }
-    .total .btn.marked:hover, .total .btn.locked:hover, .total .btn.failed:hover {
-      background-color: black; }
-  .total .btn.skipped {
-    background-color: #333333; }
-    .total .btn.skipped:hover {
-      background-color: #1a1a1a; }
+  .total.open:hover {
+    background-color: black;
+    color: white; }
 
-.total.btn {
+.total.marked, .total.locked, .total.failed {
+  background-color: black;
+  color: white; }
+
+.total.skipped {
+  background-color: #333333;
+  color: white; }
+
+.total.points {
   background-color: white;
   border: 1vmin solid #000000;
   color: #000000; }
 
 .btn {
-  margin: 2vmin 0.2vmin; }
+  margin: 1vmin 0.3vmin; }
 
-.fails .btn {
-  margin-left: 3vmin;
-  margin-right: 3vmin; }
-
-.lock {
-  margin-left: 3vmin; }
+.revert {
+  margin-right: 6vmin; }
 
 .refresh {
   margin-left: 6vmin; }
@@ -129,7 +131,7 @@ html, body, .container-fluid {
   height: 100%; }
 
 .row {
-  height: calc(100% / 6); }
+  height: calc(100% / 7); }
 
 @media all and (orientation: portrait) {
   .container-fluid {
@@ -148,7 +150,7 @@ html, body, .container-fluid {
     width: 100vh;
     height: 100vw; }
   .row {
-    height: calc(100vw / 6); } }
+    height: calc(100vw / 7); } }
 
 .row {
   display: flex;
@@ -157,9 +159,16 @@ html, body, .container-fluid {
 .btn {
   flex: 1;
   -webkit-flex: 1;
-  font-size: 5vmin;
+  font-size: 5.5vmin;
   font-weight: bold;
   border-radius: 3vmin; }
 
-.results .btn.red, .results .btn.yellow, .results .btn.green, .results .btn.blue, .results .btn.fails, .results .btn.total {
+.revert, .theme, .refresh {
+  font-size: 3.5vmin; }
+
+.badge {
+  font-size: 2.0vmin;
+  font-weight: bold; }
+
+.finished .btn:not(.revert):not(.theme):not(.refresh), .disabled, .marked, .skipped, .locked, .failed, .points, .active {
   pointer-events: none; }

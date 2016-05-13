@@ -1,211 +1,69 @@
-riot.tag2('app', '<div class="container-fluid {finished: state.finished}"> <div each="{state.colors}" class="row {color}"> <button each="{numbers}" ontouchstart="{clickNumber(color)}" onclick="{clickNumber(color)}" class="btn {skipped: skipped, marked: marked, disabled: last && !lockable}"> <span class="{hidden: marked}">{number}</span> <span class="glyphicon glyphicon-remove {hidden: !marked}"></span> </button> <button ontouchstart="{clickLock}" onclick="{clickLock}" class="btn lock {locked: locked}"> <span class="glyphicon glyphicon-lock {hidden: locked}"></span> <span class="glyphicon glyphicon-remove {hidden: !locked}"></span> </button> </div> <div class="row fails"> <button each="{state.fails.fails}" ontouchstart="{clickFail}" onclick="{clickFail}" class="btn {failed: failed}"> <span class="glyphicon glyphicon-ban-circle {hidden: failed}"></span> <span class="glyphicon glyphicon-remove {hidden: !failed}"></span> </button> </div> <div class="row results"> <button each="{state.colors}" class="btn {color}">+ {points}</button> <button class="btn fails">- {state.fails.points}</button> <button class="btn total">= {state.points}</button> <button class="btn btn-info refresh" ontouchstart="{clickRefresh}" onclick="{clickRefresh}"><span class="glyphicon glyphicon-refresh"></span></button> </div> </div>', '', '', function(opts) {
-'use strict';
+riot.tag2('app', '<div class="container-fluid {finished: board.isFinished()}"> <div each="{row, rowIndex in board.getRows()}" class="row"> <button each="{number, numberIndex in row}" ontouchstart="{clickNumber(rowIndex, numberIndex)}" onclick="{clickNumber(rowIndex, numberIndex)}" class="btn {number.getColor()} number {open: number.isNumberOpen(), marked: number.isNumberMarked(), skipped: number.isNumberSkipped(), disabled: row.isNumberDisabled(numberIndex)}"> <span class="{hidden: number.isNumberMarked()}">{number.getLabel()}</span> <span class="glyphicon glyphicon-remove {hidden: !number.isNumberMarked()}"></span> </button> <button ontouchstart="{clickLock(rowIndex)}" onclick="{clickLock(rowIndex)}" class="btn {row.getLastNumber().getColor()} lock {open: row.isRowOpen(), locked: row.isRowClosed()}"> <span class="glyphicon glyphicon-lock {hidden: !row.isRowOpen()}"></span> <span class="glyphicon glyphicon-remove {hidden: !row.isRowClosed()}"></span> </button> </div> <div class="row"> <button each="{fail, failIndex in board.getFails()}" ontouchstart="{clickFail(failIndex)}" onclick="{clickFail(failIndex)}" class="btn fail {open: fail.isFailOpen(), failed: fail.isFailFailed()}"> <span class="glyphicon glyphicon-ban-circle {hidden: !fail.isFailOpen()}"></span> <span class="glyphicon glyphicon-remove {hidden: !fail.isFailFailed()}"></span> </button> </div> <div class="row"> <button each="{[{ color: \'red\' }, { color: \'yellow\' }, { color: \'green\' }, { color: \'blue\' }]}" class="btn {color} points">{board.getColorPoints(color)}</button> <button class="btn fail points">{board.getFailPoints()}</button> <button class="btn total points">{board.getPoints()}</button> </div> <div class="row"> <button class="btn btn-default revert {disabled: !isRevertable()}" ontouchstart="{clickRevert}" onclick="{clickRevert}">Rückgängig</button> <button class="btn btn-default theme {active: theme === \'classic\'}" ontouchstart="{clickTheme(\'classic\')}" onclick="{clickTheme(\'classic\')}">Klassik</button> <button class="btn btn-default theme {active: theme === \'mixedColors\'}" ontouchstart="{clickTheme(\'mixedColors\')}" onclick="{clickTheme(\'mixedColors\')}">Gemixxt<br><span class="badge">Farben</span></button> <button class="btn btn-default theme {active: theme === \'mixedNumbers\'}" ontouchstart="{clickTheme(\'mixedNumbers\')}" onclick="{clickTheme(\'mixedNumbers\')}">Gemixxt<br><span class="badge">Zahlen</span></button> <button class="btn btn-default refresh" ontouchstart="{clickRefresh}" onclick="{clickRefresh}">Nochmal</button> </div> </div>', '', '', function(opts) {
 
-(function () {
-  function generateColor(color, order) {
-    color = { color: color, order: order, numbers: [], lockable: false, closed: false, points: 0 };
-    if (order === 'asc') {
-      var number;
-      for (number = 2; number <= 12; ++number) {
-        color.numbers.push({ number: number, marked: false, skipped: false, last: number === 12 });
-      }
-    }
-    if (order === 'desc') {
-      for (number = 12; number >= 2; --number) {
-        color.numbers.push({ number: number, marked: false, skipped: false, last: number === 2 });
-      }
-    }
-    return color;
+  this.board = new Dqwixx.Board();
+
+  var currentString = localStorage.getItem('dqwixx-current');
+  if (currentString) {
+    var currentJson = JSON.parse(currentString);
+    this.board.resume(currentJson.board);
+    this.theme = currentJson.theme;
+  } else {
+    Dqwixx.themes.classic(this.board);
+    this.theme = 'classic';
   }
 
-  function refresh(state) {
-    state.colors = [generateColor('red', 'asc'), generateColor('yellow', 'asc'), generateColor('green', 'desc'), generateColor('blue', 'desc')];
-    state.fails = {
-        fails: [{ failed: false }, { failed: false }, { failed: false }, { failed: false }],
-        points: 0
+  this.clickNumber = function (rowIndex, numberIndex) {
+    return function () {
+      localStorage.setItem('dqwixx-before', localStorage.getItem('dqwixx-current'));
+      this.board.markNumber(rowIndex, numberIndex);
+      localStorage.setItem('dqwixx-current', JSON.stringify({ board: this.board, theme: this.theme }));
     };
-    state.points = 0;
-    state.finished = false;
-  }
-
-  function calcColorPoints(color) {
-    var marked = color.numbers.filter(function (number) { return number.marked }).length;
-    var numbers = color.numbers;
-    var last = numbers[numbers.length - 1];
-    if (marked > 5 && last.marked && color.locked) {
-      ++marked;
-    }
-    color.points = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78][marked];
-  }
-
-  function determineLockable(color) {
-    var marked = color.numbers.filter(function (number) { return number.marked }).length;
-    color.lockable = marked >= 5;
-  }
-
-  function calcFailPoints(state) {
-    var fails = state.fails;
-    var failed = fails.fails.filter(function (fail) { return fail.failed }).length;
-    fails.points = failed * 5;
-  }
-
-  function calcTotalPoints(state) {
-    var points = state.colors
-        .map(function (color) { return color.points })
-        .reduce(function (pointsA, pointsB) { return pointsA + pointsB }, 0);
-    points -= state.fails.points;
-    state.points = points;
-  }
-
-  function determineFinished(state) {
-    var locked = state.colors.filter(function (color) { return color.locked }).length;
-    var failed = state.fails.fails.filter(function (fail) { return fail.failed }).length;
-    state.finished = locked >= 2 || failed >= 4;
-  }
-
-  function markNumber(color, number) {
-    number.marked = true;
-    number.skipped = false;
-    if (number.last && !color.locked) {
-      lockColor(color);
-    } else {
-      var numbers = color.numbers;
-      for (var i = 0; i < numbers.length; ++i) {
-        if (numbers[i].number === number.number) {
-          break;
-        }
-        numbers[i].skipped = !numbers[i].marked;
-      }
-    }
-  }
-
-  function unmarkNumber(color, number) {
-    number.marked = false;
-    if (number.last && color.locked) {
-      unlockColor(color);
-    } else {
-      var numbers = color.numbers;
-      var last = numbers[10];
-      var marked = numbers.filter(function (number) { return number.marked }).length;
-      if (last.marked && marked <= 5) {
-        unmarkNumber(color, last);
-      }
-      for (var i = numbers.length - 1; i >= 0; --i) {
-        if (numbers[i].marked) {
-          if ((color.order === 'asc' && numbers[i].number > number.number)
-              || (color.order === 'desc' && numbers[i].number < number.number)) {
-            number.skipped = true;
-          }
-          break;
-        }
-        numbers[i].skipped = color.locked;
-      }
-    }
-  }
-
-  function lockColor(color) {
-    color.locked = true;
-    var numbers = color.numbers;
-    for (var i = 0; i < numbers.length; ++i) {
-      var number = numbers[i];
-      number.skipped = !number.marked;
-    }
-  }
-
-  function unlockColor(color) {
-    color.locked = false;
-    var numbers = color.numbers;
-    var last = numbers[numbers.length - 1];
-    if (last.marked) {
-      unmarkNumber(color, last);
-    } else {
-      for (var i = numbers.length - 1; i >= 0; --i) {
-        if (numbers[i].marked) {
-          break;
-        }
-        numbers[i].skipped = false;
-      }
-    }
-  }
-
-  function storeState(state) {
-    if (state) {
-      localStorage.setItem('dqwixx-state', JSON.stringify(state));
-    } else {
-      localStorage.removeItem('dqwixx-state');
-    }
-  }
-
-  function loadState() {
-    var state = localStorage.getItem('dqwixx-state');
-    if (state) {
-      state = JSON.parse(state);
-    }
-    return state;
-  }
-
-  var dqwixx = { state: loadState() };
-  if (!dqwixx.state) {
-    dqwixx.state = {};
-    refresh(dqwixx.state);
-  }
-
-  dqwixx.clickNumber = function (color, number) {
-    if (number.last && !color.lockable) {
-      return;
-    }
-    if (number.marked) {
-      unmarkNumber(color, number);
-    } else {
-      markNumber(color, number);
-    }
-    calcColorPoints(color);
-    determineLockable(color);
-    calcTotalPoints(dqwixx.state);
-    if (number.last) {
-      determineFinished(dqwixx.state);
-    }
-    storeState(dqwixx.state);
   };
 
-  dqwixx.clickLock = function (color) {
-    if (color.locked) {
-      unlockColor(color);
-    } else {
-      lockColor(color);
-    }
-    calcColorPoints(color);
-    determineLockable(color);
-    calcTotalPoints(dqwixx.state);
-    determineFinished(dqwixx.state);
-    storeState(dqwixx.state);
+  this.clickLock = function (rowIndex) {
+    return function () {
+      localStorage.setItem('dqwixx-before', localStorage.getItem('dqwixx-current'));
+      this.board.closeRow(rowIndex);
+      localStorage.setItem('dqwixx-current', JSON.stringify({ board: this.board, theme: this.theme }));
+    };
   };
 
-  dqwixx.clickFail = function (fail) {
-    fail.failed = !fail.failed;
-    calcFailPoints(dqwixx.state);
-    calcTotalPoints(dqwixx.state);
-    determineFinished(dqwixx.state);
-    storeState(dqwixx.state);
+  this.clickFail = function (failIndex) {
+    return function () {
+      localStorage.setItem('dqwixx-before', localStorage.getItem('dqwixx-current'));
+      this.board.failFail(failIndex);
+      localStorage.setItem('dqwixx-current', JSON.stringify({ board: this.board, theme: this.theme }));
+    };
   };
 
-  dqwixx.clickRefresh = function () {
-    refresh(dqwixx.state);
-    storeState();
+  this.isRevertable = function () {
+    return localStorage.getItem('dqwixx-before');
   };
 
-  window.dqwixx = dqwixx;
-})();
+  this.clickRevert = function () {
+    var beforeString = localStorage.getItem('dqwixx-before');
+    var beforeJson = JSON.parse(beforeString);
+    this.board.resume(beforeJson.board);
+    this.theme = beforeJson.theme;
+    localStorage.setItem('dqwixx-current', beforeString);
+    localStorage.removeItem('dqwixx-before');
+  };
 
-  this.state = dqwixx.state;
+  this.clickTheme = function (theme) {
+    return function () {
+      if (theme === this.theme) {
+        return;
+      }
+      localStorage.setItem('dqwixx-before', localStorage.getItem('dqwixx-current'));
+      this.board = Dqwixx.themes[theme](new Dqwixx.Board());
+      this.theme = theme;
+      localStorage.setItem('dqwixx-current', JSON.stringify({ board: this.board, theme: this.theme }));
+    };
+  };
 
-  var colors = {};
-  dqwixx.state.colors.map(function (color) {
-    colors[color.color] = color;
-  });
-
-  this.clickRefresh = function () { dqwixx.clickRefresh(); };
-  this.clickNumber = function (color) { return function (e) { dqwixx.clickNumber(colors[color], e.item); }; };
-  this.clickLock = function (e) { dqwixx.clickLock(e.item); };
-  this.clickFail = function (e) { dqwixx.clickFail(e.item); };
+  this.clickRefresh = function () {
+    localStorage.setItem('dqwixx-before', localStorage.getItem('dqwixx-current'));
+    this.board = Dqwixx.themes[this.theme](new Dqwixx.Board());
+    localStorage.setItem('dqwixx-current', JSON.stringify({ board: this.board, theme: this.theme }));
+  };
 });
