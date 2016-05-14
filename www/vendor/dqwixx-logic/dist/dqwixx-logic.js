@@ -8,18 +8,32 @@ var Board = (function () {
         this.fails = [];
     }
     Board.prototype.resume = function (jsonBoard) {
-        this.rows = jsonBoard.rows.map(function (row) { return (new Row_1["default"]().resume(row)); });
-        this.fails = jsonBoard.fails.map(function (fail) { return (new Fail_1["default"]()).resume(fail.state); });
+        var _this = this;
+        this.setRows(jsonBoard.rows.map(function (row) { return new Row_1["default"]().resume(row); }));
+        jsonBoard.rows.forEach(function (jsonRow, rowIndex) {
+            var linkedRows = [];
+            for (var _i = 0, _a = jsonRow.linkedRowIndexes; _i < _a.length; _i++) {
+                var linkedRowIndex = _a[_i];
+                linkedRows.push(_this.rows[linkedRowIndex]);
+            }
+            _this.rows[rowIndex].setLinkedRows(linkedRows);
+        });
+        this.fails = jsonBoard.fails.map(function (fail) { return new Fail_1["default"]().resume(fail.state); });
         return this;
     };
     Board.prototype.setRows = function (rows) {
+        rows.forEach(function (row, rowIndex) {
+            row.setRowIndex(rowIndex);
+        });
         this.rows = rows;
+        return this;
     };
     Board.prototype.getRows = function () {
         return this.rows;
     };
     Board.prototype.setFails = function (fails) {
         this.fails = Array.apply({}, Array(fails)).map(function () { return new Fail_1["default"](); });
+        return this;
     };
     Board.prototype.getFails = function () {
         return this.fails;
@@ -32,21 +46,23 @@ var Board = (function () {
     };
     Board.prototype.closeRow = function (rowIndex) {
         if (this.isFinished()) {
-            return;
+            return this;
         }
         this.rows[rowIndex].closeRow();
+        return this;
     };
     Board.prototype.failFail = function (failIndex) {
         if (this.isFinished()) {
-            return;
+            return this;
         }
         this.fails[failIndex].failFail();
+        return this;
     };
     Board.prototype.getColorPoints = function (color) {
         var marked = this.getRows().map(function (row) { return row.countNumbersMarkedByColor(color); })
             .reduce(function (colorPointsA, colorPointsB) { return colorPointsA + colorPointsB; }, 0);
         var colorPoints = 0;
-        for (var increase = 1; increase <= marked; ++increase) {
+        for (var increase = 1; increase <= Math.min(marked, 15); ++increase) {
             colorPoints += increase;
         }
         return colorPoints;
@@ -70,10 +86,10 @@ var Board = (function () {
         return !this.isOpen();
     };
     Board.prototype.countRowsClosed = function () {
-        return this.rows.filter(function (row) { return row.isRowClosed(); }).length;
+        return this.getRows().filter(function (row) { return row.isRowClosed(); }).length;
     };
     Board.prototype.countFailsFailed = function () {
-        return this.fails.filter(function (fail) { return fail.isFailFailed(); }).length;
+        return this.getFails().filter(function (fail) { return fail.isFailFailed(); }).length;
     };
     return Board;
 }());
@@ -102,13 +118,17 @@ var CachedBoard = (function (_super) {
     CachedBoard.prototype.setRows = function (rows) {
         _super.prototype.setRows.call(this, rows);
         this.colorPoints = {};
+        return this;
     };
     CachedBoard.prototype.markNumber = function (rowIndex, numberIndex) {
-        var color = _super.prototype.markNumber.call(this, rowIndex, numberIndex);
-        if (color) {
-            delete this.colorPoints[color];
+        var number = _super.prototype.markNumber.call(this, rowIndex, numberIndex);
+        if (number) {
+            for (var _i = 0, _a = number.getColors(); _i < _a.length; _i++) {
+                var color = _a[_i];
+                delete this.colorPoints[color];
+            }
         }
-        return color;
+        return number;
     };
     CachedBoard.prototype.getColorPoints = function (color) {
         if (!this.colorPoints[color]) {
@@ -138,9 +158,10 @@ var Fail = (function () {
     };
     Fail.prototype.failFail = function () {
         if (!this.isFailOpen()) {
-            return;
+            return this;
         }
         this.state = FailState.Failed;
+        return this;
     };
     Fail.prototype.isFailOpen = function () {
         return this.state === FailState.Open;
@@ -174,6 +195,12 @@ var Number = (function () {
     Number.prototype.getColor = function () {
         return this.color;
     };
+    Number.prototype.getColors = function () {
+        return this.getColor().split('-');
+    };
+    Number.prototype.includesColor = function (color) {
+        return this.getColors().indexOf(color) !== -1;
+    };
     Number.prototype.getLabel = function () {
         return this.label;
     };
@@ -182,13 +209,14 @@ var Number = (function () {
             return;
         }
         this.state = NumberState.Marked;
-        return this.getColor();
+        return this;
     };
     Number.prototype.skipNumber = function () {
         if (!this.isNumberOpen()) {
-            return;
+            return this;
         }
         this.state = NumberState.Skipped;
+        return this;
     };
     Number.prototype.isNumberOpen = function () {
         return this.state === NumberState.Open;
@@ -206,24 +234,60 @@ exports["default"] = Number;
 
 },{}],5:[function(require,module,exports){
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var Number_1 = require('./Number');
-var Row = (function (_super) {
-    __extends(Row, _super);
+var Row = (function () {
     function Row() {
-        _super.apply(this, arguments);
+        this.numbers = [];
+        this.bigPoints = false;
+        this.linkedRows = [];
     }
     Row.prototype.resume = function (jsonRow) {
-        for (var _i = 0, jsonRow_1 = jsonRow; _i < jsonRow_1.length; _i++) {
-            var jsonNumber = jsonRow_1[_i];
+        var numbers = [];
+        for (var _i = 0, _a = jsonRow.numbers; _i < _a.length; _i++) {
+            var jsonNumber = _a[_i];
             var number = new Number_1["default"](jsonNumber.color, jsonNumber.label);
-            this.push(number.resume(jsonNumber.state));
+            numbers.push(number.resume(jsonNumber.state));
+        }
+        this.setNumbers(numbers);
+        if (jsonRow.bigPoints) {
+            this.enableBigPoints();
         }
         return this;
+    };
+    Row.prototype.toJSON = function () {
+        return {
+            numbers: this.getNumbers(),
+            bigPoints: this.isBigPoints(),
+            linkedRowIndexes: this.getLinkedRows().map(function (row) { return row.getRowIndex(); })
+        };
+    };
+    Row.prototype.setRowIndex = function (rowIndex) {
+        this.rowIndex = rowIndex;
+        return this;
+    };
+    Row.prototype.getRowIndex = function () {
+        return this.rowIndex;
+    };
+    Row.prototype.setNumbers = function (numbers) {
+        this.numbers = numbers;
+        return this;
+    };
+    Row.prototype.getNumbers = function () {
+        return this.numbers;
+    };
+    Row.prototype.enableBigPoints = function () {
+        this.bigPoints = true;
+        return this;
+    };
+    Row.prototype.isBigPoints = function () {
+        return this.bigPoints;
+    };
+    Row.prototype.setLinkedRows = function (linkedRows) {
+        this.linkedRows = linkedRows;
+        return this;
+    };
+    Row.prototype.getLinkedRows = function () {
+        return this.linkedRows;
     };
     Row.prototype.markNumber = function (numberIndex) {
         if (this.isRowClosed()) {
@@ -232,163 +296,203 @@ var Row = (function (_super) {
         if (this.isNumberDisabled(numberIndex)) {
             return;
         }
-        for (var i = 0; i < this.length; ++i) {
+        var numbers = this.getNumbers();
+        for (var i = 0; i < numbers.length; ++i) {
             if (i === numberIndex) {
-                return this[i].markNumber();
+                return numbers[i].markNumber();
             }
             else {
-                this[i].skipNumber();
+                numbers[i].skipNumber();
             }
         }
     };
     Row.prototype.closeRow = function () {
+        if (this.isBigPoints()) {
+            return this;
+        }
         if (this.isRowClosed()) {
-            return;
+            return this;
         }
-        for (var i = 0; i < this.length; ++i) {
-            this[i].skipNumber();
+        for (var _i = 0, _a = this.getNumbers(); _i < _a.length; _i++) {
+            var number = _a[_i];
+            number.skipNumber();
         }
+        return this;
     };
     Row.prototype.isRowOpen = function () {
+        if (this.isBigPoints()) {
+            return true;
+        }
         return this.getLastNumber().isNumberOpen();
     };
     Row.prototype.isRowClosed = function () {
         return !this.isRowOpen();
     };
     Row.prototype.countNumbersMarkedByColor = function (color) {
-        var markedNumbers = this.filter(function (number) { return number.isNumberMarked() && number.getColor() === color; }).length;
+        var markedNumbers = this.getNumbers().filter(function (number) { return number.isNumberMarked() && number.includesColor(color); }).length;
+        if (this.isBigPoints()) {
+            return markedNumbers;
+        }
         var lastNumber = this.getLastNumber();
-        if (lastNumber.isNumberMarked() && lastNumber.getColor() === color) {
+        if (lastNumber.isNumberMarked() && lastNumber.includesColor(color)) {
             ++markedNumbers;
         }
         return markedNumbers;
     };
     Row.prototype.isNumberDisabled = function (numberIndex) {
+        if (this.isBigPoints()) {
+            for (var _i = 0, _a = this.getLinkedRows(); _i < _a.length; _i++) {
+                var linkedRow = _a[_i];
+                if (linkedRow.getNumbers()[numberIndex].isNumberMarked()) {
+                    return false;
+                }
+            }
+            return true;
+        }
         return this.isLastNumber(numberIndex) && this.countNumbersMarked() < 5;
     };
     Row.prototype.getLastNumber = function () {
-        return this[this.length - 1];
+        var numbers = this.getNumbers();
+        return numbers[numbers.length - 1];
     };
     Row.prototype.isLastNumber = function (numberIndex) {
-        return this.length - 1 === numberIndex;
+        return this.getNumbers().length - 1 === numberIndex;
     };
     Row.prototype.countNumbersMarked = function () {
-        return this.filter(function (number) { return number.isNumberMarked(); }).length;
+        return this.getNumbers().filter(function (number) { return number.isNumberMarked(); }).length;
     };
     return Row;
-}(Array));
+}());
 exports.__esModule = true;
 exports["default"] = Row;
 
 },{"./Number":4}],6:[function(require,module,exports){
 "use strict";
-var Number_1 = require('../logics/Number');
-var Row_1 = require('../logics/Row');
-function Ascending(color) {
-    var row = new Row_1["default"]();
-    for (var numberLabel = 2; numberLabel <= 12; ++numberLabel) {
-        row.push(new Number_1["default"](color, numberLabel));
-    }
-    return row;
-}
-function Descending(color) {
-    var row = new Row_1["default"]();
-    for (var numberLabel = 12; numberLabel >= 2; --numberLabel) {
-        row.push(new Number_1["default"](color, numberLabel));
-    }
-    return row;
-}
+var classic_1 = require('./classic');
 function classic(board) {
-    board.setRows([Ascending('red'), Ascending('yellow'), Descending('green'), Descending('blue')]);
-    board.setFails(4);
-    return board;
+    var red = classic_1.Ascending('red');
+    var yellow = classic_1.Ascending('yellow');
+    var green = classic_1.Descending('green');
+    var blue = classic_1.Descending('blue');
+    var redYellow = classic_1.Ascending('red-yellow')
+        .enableBigPoints()
+        .setLinkedRows([red, yellow]);
+    var greenBlue = classic_1.Descending('green-blue')
+        .enableBigPoints()
+        .setLinkedRows([green, blue]);
+    return board
+        .setRows([red, redYellow, yellow, green, greenBlue, blue])
+        .setFails(4);
 }
 exports.__esModule = true;
 exports["default"] = classic;
 
-},{"../logics/Number":4,"../logics/Row":5}],7:[function(require,module,exports){
+},{"./classic":7}],7:[function(require,module,exports){
 "use strict";
 var Number_1 = require('../logics/Number');
 var Row_1 = require('../logics/Row');
-function red() {
-    var row = new Row_1["default"]();
-    row.push(new Number_1["default"]('yellow', 2));
-    row.push(new Number_1["default"]('yellow', 3));
-    row.push(new Number_1["default"]('yellow', 4));
-    row.push(new Number_1["default"]('blue', 5));
-    row.push(new Number_1["default"]('blue', 6));
-    row.push(new Number_1["default"]('blue', 7));
-    row.push(new Number_1["default"]('green', 8));
-    row.push(new Number_1["default"]('green', 9));
-    row.push(new Number_1["default"]('green', 10));
-    row.push(new Number_1["default"]('red', 11));
-    row.push(new Number_1["default"]('red', 12));
-    return row;
+function Ascending(color) {
+    var numbers = [];
+    for (var numberLabel = 2; numberLabel <= 12; ++numberLabel) {
+        numbers.push(new Number_1["default"](color, numberLabel));
+    }
+    return new Row_1["default"]().setNumbers(numbers);
 }
-function yellow() {
-    var row = new Row_1["default"]();
-    row.push(new Number_1["default"]('red', 2));
-    row.push(new Number_1["default"]('red', 3));
-    row.push(new Number_1["default"]('green', 4));
-    row.push(new Number_1["default"]('green', 5));
-    row.push(new Number_1["default"]('green', 6));
-    row.push(new Number_1["default"]('green', 7));
-    row.push(new Number_1["default"]('blue', 8));
-    row.push(new Number_1["default"]('blue', 9));
-    row.push(new Number_1["default"]('yellow', 10));
-    row.push(new Number_1["default"]('yellow', 11));
-    row.push(new Number_1["default"]('yellow', 12));
-    return row;
+exports.Ascending = Ascending;
+function Descending(color) {
+    var numbers = [];
+    for (var numberLabel = 12; numberLabel >= 2; --numberLabel) {
+        numbers.push(new Number_1["default"](color, numberLabel));
+    }
+    return new Row_1["default"]().setNumbers(numbers);
 }
-function green() {
-    var row = new Row_1["default"]();
-    row.push(new Number_1["default"]('blue', 12));
-    row.push(new Number_1["default"]('blue', 11));
-    row.push(new Number_1["default"]('blue', 10));
-    row.push(new Number_1["default"]('yellow', 9));
-    row.push(new Number_1["default"]('yellow', 8));
-    row.push(new Number_1["default"]('yellow', 7));
-    row.push(new Number_1["default"]('red', 6));
-    row.push(new Number_1["default"]('red', 5));
-    row.push(new Number_1["default"]('red', 4));
-    row.push(new Number_1["default"]('green', 3));
-    row.push(new Number_1["default"]('green', 2));
-    return row;
-}
-function blue() {
-    var row = new Row_1["default"]();
-    row.push(new Number_1["default"]('green', 12));
-    row.push(new Number_1["default"]('green', 11));
-    row.push(new Number_1["default"]('red', 10));
-    row.push(new Number_1["default"]('red', 9));
-    row.push(new Number_1["default"]('red', 8));
-    row.push(new Number_1["default"]('red', 7));
-    row.push(new Number_1["default"]('yellow', 6));
-    row.push(new Number_1["default"]('yellow', 5));
-    row.push(new Number_1["default"]('blue', 4));
-    row.push(new Number_1["default"]('blue', 3));
-    row.push(new Number_1["default"]('blue', 2));
-    return row;
-}
-function mixedColors(board) {
-    board.setRows([red(), yellow(), green(), blue()]);
-    board.setFails(4);
-    return board;
+exports.Descending = Descending;
+function classic(board) {
+    return board
+        .setRows([Ascending('red'), Ascending('yellow'), Descending('green'), Descending('blue')])
+        .setFails(4);
 }
 exports.__esModule = true;
-exports["default"] = mixedColors;
+exports["default"] = classic;
 
 },{"../logics/Number":4,"../logics/Row":5}],8:[function(require,module,exports){
 "use strict";
 var Number_1 = require('../logics/Number');
 var Row_1 = require('../logics/Row');
+function red() {
+    return new Row_1["default"]().setNumbers([
+        new Number_1["default"]('yellow', 2),
+        new Number_1["default"]('yellow', 3),
+        new Number_1["default"]('yellow', 4),
+        new Number_1["default"]('blue', 5),
+        new Number_1["default"]('blue', 6),
+        new Number_1["default"]('blue', 7),
+        new Number_1["default"]('green', 8),
+        new Number_1["default"]('green', 9),
+        new Number_1["default"]('green', 10),
+        new Number_1["default"]('red', 11),
+        new Number_1["default"]('red', 12)
+    ]);
+}
+function yellow() {
+    return new Row_1["default"]().setNumbers([
+        new Number_1["default"]('red', 2),
+        new Number_1["default"]('red', 3),
+        new Number_1["default"]('green', 4),
+        new Number_1["default"]('green', 5),
+        new Number_1["default"]('green', 6),
+        new Number_1["default"]('green', 7),
+        new Number_1["default"]('blue', 8),
+        new Number_1["default"]('blue', 9),
+        new Number_1["default"]('yellow', 10),
+        new Number_1["default"]('yellow', 11),
+        new Number_1["default"]('yellow', 12)
+    ]);
+}
+function green() {
+    return new Row_1["default"]().setNumbers([
+        new Number_1["default"]('blue', 12),
+        new Number_1["default"]('blue', 11),
+        new Number_1["default"]('blue', 10),
+        new Number_1["default"]('yellow', 9),
+        new Number_1["default"]('yellow', 8),
+        new Number_1["default"]('yellow', 7),
+        new Number_1["default"]('red', 6),
+        new Number_1["default"]('red', 5),
+        new Number_1["default"]('red', 4),
+        new Number_1["default"]('green', 3),
+        new Number_1["default"]('green', 2)
+    ]);
+}
+function blue() {
+    return new Row_1["default"]().setNumbers([
+        new Number_1["default"]('green', 12),
+        new Number_1["default"]('green', 11),
+        new Number_1["default"]('red', 10),
+        new Number_1["default"]('red', 9),
+        new Number_1["default"]('red', 8),
+        new Number_1["default"]('red', 7),
+        new Number_1["default"]('yellow', 6),
+        new Number_1["default"]('yellow', 5),
+        new Number_1["default"]('blue', 4),
+        new Number_1["default"]('blue', 3),
+        new Number_1["default"]('blue', 2)
+    ]);
+}
+function mixedColors(board) {
+    return board
+        .setRows([red(), yellow(), green(), blue()])
+        .setFails(4);
+}
+exports.__esModule = true;
+exports["default"] = mixedColors;
+
+},{"../logics/Number":4,"../logics/Row":5}],9:[function(require,module,exports){
+"use strict";
+var Number_1 = require('../logics/Number');
+var Row_1 = require('../logics/Row');
 function row(color, numberLabels) {
-    var row = new Row_1["default"]();
-    for (var _i = 0, numberLabels_1 = numberLabels; _i < numberLabels_1.length; _i++) {
-        var numberLabel = numberLabels_1[_i];
-        row.push(new Number_1["default"](color, numberLabel));
-    }
-    return row;
+    return new Row_1["default"]().setNumbers(numberLabels.map(function (numberLabel) { return new Number_1["default"](color, numberLabel); }));
 }
 function red() {
     return row('red', [10, 6, 2, 8, 3, 4, 12, 5, 9, 7, 11]);
@@ -403,20 +507,21 @@ function blue() {
     return row('blue', [5, 7, 11, 9, 12, 3, 8, 10, 2, 6, 4]);
 }
 function mixedNumbers(board) {
-    board.setRows([red(), yellow(), green(), blue()]);
-    board.setFails(4);
-    return board;
+    return board
+        .setRows([red(), yellow(), green(), blue()])
+        .setFails(4);
 }
 exports.__esModule = true;
 exports["default"] = mixedNumbers;
 
-},{"../logics/Number":4,"../logics/Row":5}],9:[function(require,module,exports){
+},{"../logics/Number":4,"../logics/Row":5}],10:[function(require,module,exports){
 "use strict";
 var CachedBoard_1 = require('./logics/CachedBoard');
 var classic_1 = require('./themes/classic');
+var bigPoints_1 = require('./themes/bigPoints');
 var mixedColors_1 = require('./themes/mixedColors');
 var mixedNumbers_1 = require('./themes/mixedNumbers');
-var Dqwixx = { Board: CachedBoard_1["default"], themes: { classic: classic_1["default"], mixedColors: mixedColors_1["default"], mixedNumbers: mixedNumbers_1["default"] } };
+var Dqwixx = { Board: CachedBoard_1["default"], themes: { classic: classic_1["default"], bigPoints: bigPoints_1["default"], mixedColors: mixedColors_1["default"], mixedNumbers: mixedNumbers_1["default"] } };
 window.Dqwixx = Dqwixx;
 
-},{"./logics/CachedBoard":2,"./themes/classic":6,"./themes/mixedColors":7,"./themes/mixedNumbers":8}]},{},[9]);
+},{"./logics/CachedBoard":2,"./themes/bigPoints":6,"./themes/classic":7,"./themes/mixedColors":8,"./themes/mixedNumbers":9}]},{},[10]);

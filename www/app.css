@@ -118,6 +118,44 @@
   border: 1vmin solid #000000;
   color: #000000; }
 
+.red-yellow.open {
+  background-image: -webkit-linear-gradient(top, #d9534f, #d9534f 50%, #f0ad4e 50%);
+  background-image: linear-gradient(to bottom, #d9534f, #d9534f 50%, #f0ad4e 50%);
+  color: white; }
+  .red-yellow.open:hover {
+    background-image: -webkit-linear-gradient(top, #c9302c, #c9302c 50%, #ec971f 50%);
+    background-image: linear-gradient(to bottom, #c9302c, #c9302c 50%, #ec971f 50%);
+    color: white; }
+
+.red-yellow.marked {
+  background-image: -webkit-linear-gradient(top, #761c19, #761c19 50%, #985f0d 50%);
+  background-image: linear-gradient(to bottom, #761c19, #761c19 50%, #985f0d 50%);
+  color: white; }
+
+.red-yellow.skipped {
+  background-image: -webkit-linear-gradient(top, #eba5a3, #eba5a3 50%, #f8d9ac 50%);
+  background-image: linear-gradient(to bottom, #eba5a3, #eba5a3 50%, #f8d9ac 50%);
+  color: white; }
+
+.green-blue.open {
+  background-image: -webkit-linear-gradient(top, #5cb85c, #5cb85c 50%, #337ab7 50%);
+  background-image: linear-gradient(to bottom, #5cb85c, #5cb85c 50%, #337ab7 50%);
+  color: white; }
+  .green-blue.open:hover {
+    background-image: -webkit-linear-gradient(top, #449d44, #449d44 50%, #285f8f 50%);
+    background-image: linear-gradient(to bottom, #449d44, #449d44 50%, #285f8f 50%);
+    color: white; }
+
+.green-blue.marked {
+  background-image: -webkit-linear-gradient(top, #255625, #255625 50%, #122a3f 50%);
+  background-image: linear-gradient(to bottom, #255625, #255625 50%, #122a3f 50%);
+  color: white; }
+
+.green-blue.skipped {
+  background-image: -webkit-linear-gradient(top, #a3d7a3, #a3d7a3 50%, #77acd9 50%);
+  background-image: linear-gradient(to bottom, #a3d7a3, #a3d7a3 50%, #77acd9 50%);
+  color: white; }
+
 .btn {
   margin: 1vmin 0.3vmin; }
 
@@ -130,8 +168,11 @@
 html, body, .container-fluid {
   height: 100%; }
 
-.row {
+:not(.bigPoints) .row {
   height: calc(100% / 7); }
+
+.bigPoints .row {
+  height: calc(100% / 9); }
 
 @media all and (orientation: portrait) {
   .container-fluid {
@@ -149,8 +190,10 @@ html, body, .container-fluid {
   .container-fluid {
     width: 100vh;
     height: 100vw; }
-  .row {
-    height: calc(100vw / 7); } }
+  :not(.bigPoints) .row {
+    height: calc(100vw / 7); }
+  .bigPoints .row {
+    height: calc(100vw / 9); } }
 
 .row {
   display: flex;
@@ -159,16 +202,19 @@ html, body, .container-fluid {
 .btn {
   flex: 1;
   -webkit-flex: 1;
-  font-size: 5.5vmin;
+  font-size: 4vmin;
   font-weight: bold;
   border-radius: 3vmin; }
 
+.red-yellow, .green-blue {
+  border-radius: 50%; }
+
 .revert, .theme, .refresh {
-  font-size: 3.5vmin; }
+  font-size: 2.5vmin; }
 
 .badge {
-  font-size: 2.0vmin;
+  font-size: 1.5vmin;
   font-weight: bold; }
 
-.finished .btn:not(.revert):not(.theme):not(.refresh), .disabled, .marked, .skipped, .locked, .failed, .points, .active {
+.finished .btn:not(.revert):not(.theme):not(.refresh), .disabled, .marked, .skipped, .locked, .failed, .points, .active, .empty {
   pointer-events: none; }
