@@ -175,12 +175,10 @@
 
 html, body, .container-fluid {
   height: 100%; }
-
-:not(.bigPoints) .row {
-  height: calc(100% / 7); }
-
-.bigPoints .row {
-  height: calc(100% / 9); }
+  html :not(.bigPoints) .row, body :not(.bigPoints) .row, .container-fluid :not(.bigPoints) .row {
+    height: calc(100% / 7); }
+  html .bigPoints .row, body .bigPoints .row, .container-fluid .bigPoints .row {
+    height: calc(100% / 9); }
 
 @media all and (orientation: portrait) {
   .container-fluid {
@@ -198,12 +196,12 @@ html, body, .container-fluid {
   .container-fluid {
     width: 100vh;
     height: 100vw; }
-  :not(.bigPoints) .row {
-    height: calc(100vw / 7); }
-  .bigPoints .row {
-    height: calc(100vw / 9); } }
+    .container-fluid :not(.bigPoints) .row {
+      height: calc(100vw / 7); }
+    .container-fluid .bigPoints .row {
+      height: calc(100vw / 9); } }
 
-.row {
+.container-fluid .row {
   display: flex;
   display: -webkit-flex; }
 
@@ -218,7 +216,7 @@ html, body, .container-fluid {
   border-radius: 50%; }
 
 .revert, .rules, .theme, .refresh {
-  font-size: 2.2vmin; }
+  font-size: 2.0vmin; }
 
 .badge {
   font-size: 1.5vmin;
