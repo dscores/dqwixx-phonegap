@@ -156,14 +156,22 @@
   background-image: linear-gradient(to bottom, #a3d7a3, #a3d7a3 50%, #77acd9 50%);
   color: white; }
 
+.modal-body {
+  max-height: calc(100vh - 78px);
+  overflow-y: auto; }
+
+@media (min-width: 768px) {
+  .modal-body {
+    max-height: calc(100vh - 118px); } }
+
 .btn {
   margin: 1vmin 0.3vmin; }
 
-.revert {
-  margin-right: 6vmin; }
+.rules {
+  margin-right: 3vmin; }
 
-.refresh {
-  margin-left: 6vmin; }
+.revert, .refresh {
+  margin-left: 3vmin; }
 
 html, body, .container-fluid {
   height: 100%; }
@@ -209,12 +217,12 @@ html, body, .container-fluid {
 .red-yellow, .green-blue {
   border-radius: 50%; }
 
-.revert, .theme, .refresh {
-  font-size: 2.5vmin; }
+.revert, .rules, .theme, .refresh {
+  font-size: 2.2vmin; }
 
 .badge {
   font-size: 1.5vmin;
   font-weight: bold; }
 
-.finished .btn:not(.revert):not(.theme):not(.refresh), .disabled, .marked, .skipped, .locked, .failed, .points, .active, .empty {
+.finished .btn:not(.revert):not(.rules):not(.theme):not(.refresh), .disabled, .marked, .skipped, .locked, .failed, .points, .active, .empty {
   pointer-events: none; }
