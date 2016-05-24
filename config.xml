@@ -3,6 +3,8 @@
   <description></description>
 
   <preference name="orientation" value="landscape"/>
+  <preference name="permissions" value="none" />
+
   <plugin name="cordova-plugin-insomnia" source="npm" />
 
   <icon src="res/icon/icon.png"/>
