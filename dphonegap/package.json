@@ -14,7 +14,7 @@
     "dphonegap": "^5.1.0",
     "dqwixx": "dscores/dqwixx",
     "dragonprojects-logo": "^1.0.0",
-    "npm-run-all": "^1.5.1"
+    "npm-run-all": "^2.1.1"
   },
   "repository": {
     "type": "git",
