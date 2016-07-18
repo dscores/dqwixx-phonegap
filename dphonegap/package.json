@@ -5,7 +5,7 @@
   "homepage": "http://github.com/dscores/dqwixx-phonegap",
   "private": true,
   "scripts": {
-    "postinstall": "npm-run-all --parallel postinstall:*",
+    "postinstall": "run-p postinstall:*",
     "postinstall:dlogos": "dlogos",
     "postinstall:dphonegap": "dphonegap dqwixx"
   },
