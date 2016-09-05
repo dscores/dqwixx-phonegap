@@ -1,17 +1,15 @@
 .red.open {
   background-color: #d9534f;
   color: white; }
-  .red.open:hover {
-    background-color: #c9302c;
-    color: white; }
 
 .red.marked, .red.locked, .red.failed {
   background-color: #761c19;
   color: white; }
 
-.red.skipped {
-  background-color: #eba5a3;
-  color: white; }
+.red.skipped, .red.disabled {
+  background-color: #f4cecd;
+  color: white;
+  opacity: 1; }
 
 .red.points {
   background-color: white;
@@ -21,17 +19,15 @@
 .yellow.open {
   background-color: #f0ad4e;
   color: white; }
-  .yellow.open:hover {
-    background-color: #ec971f;
-    color: white; }
 
 .yellow.marked, .yellow.locked, .yellow.failed {
   background-color: #985f0d;
   color: white; }
 
-.yellow.skipped {
-  background-color: #f8d9ac;
-  color: white; }
+.yellow.skipped, .yellow.disabled {
+  background-color: #fceedb;
+  color: white;
+  opacity: 1; }
 
 .yellow.points {
   background-color: white;
@@ -41,17 +37,15 @@
 .green.open {
   background-color: #5cb85c;
   color: white; }
-  .green.open:hover {
-    background-color: #449d44;
-    color: white; }
 
 .green.marked, .green.locked, .green.failed {
   background-color: #255625;
   color: white; }
 
-.green.skipped {
-  background-color: #a3d7a3;
-  color: white; }
+.green.skipped, .green.disabled {
+  background-color: #c7e6c7;
+  color: white;
+  opacity: 1; }
 
 .green.points {
   background-color: white;
@@ -61,17 +55,15 @@
 .blue.open {
   background-color: #337ab7;
   color: white; }
-  .blue.open:hover {
-    background-color: #285f8f;
-    color: white; }
 
 .blue.marked, .blue.locked, .blue.failed {
   background-color: #122a3f;
   color: white; }
 
-.blue.skipped {
-  background-color: #77acd9;
-  color: white; }
+.blue.skipped, .blue.disabled {
+  background-color: #9fc4e4;
+  color: white;
+  opacity: 1; }
 
 .blue.points {
   background-color: white;
@@ -81,17 +73,15 @@
 .fail.open {
   background-color: #aeaeae;
   color: white; }
-  .fail.open:hover {
-    background-color: #959595;
-    color: white; }
 
 .fail.marked, .fail.locked, .fail.failed {
   background-color: #626262;
   color: white; }
 
-.fail.skipped {
-  background-color: #e1e1e1;
-  color: white; }
+.fail.skipped, .fail.disabled {
+  background-color: #fbfbfb;
+  color: white;
+  opacity: 1; }
 
 .fail.points {
   background-color: white;
@@ -101,60 +91,72 @@
 .total.open {
   background-color: #000000;
   color: white; }
-  .total.open:hover {
-    background-color: black;
-    color: white; }
 
 .total.marked, .total.locked, .total.failed {
   background-color: black;
   color: white; }
 
-.total.skipped {
-  background-color: #333333;
-  color: white; }
+.total.skipped, .total.disabled {
+  background-color: #4d4d4d;
+  color: white;
+  opacity: 1; }
 
 .total.points {
   background-color: white;
   border: 1vmin solid #000000;
   color: #000000; }
 
-.red-yellow.open {
+.red-yellow.open.markedLinkedRowIndex0 {
+  background-image: -webkit-linear-gradient(top, #d9534f, #d9534f 50%, #fceedb 50%);
+  background-image: linear-gradient(to bottom, #d9534f, #d9534f 50%, #fceedb 50%);
+  color: white; }
+
+.red-yellow.open.markedLinkedRowIndex1 {
+  background-image: -webkit-linear-gradient(top, #f4cecd, #f4cecd 50%, #f0ad4e 50%);
+  background-image: linear-gradient(to bottom, #f4cecd, #f4cecd 50%, #f0ad4e 50%);
+  color: white; }
+
+.red-yellow.open.markedLinkedRowIndex0-markedLinkedRowIndex1 {
   background-image: -webkit-linear-gradient(top, #d9534f, #d9534f 50%, #f0ad4e 50%);
   background-image: linear-gradient(to bottom, #d9534f, #d9534f 50%, #f0ad4e 50%);
   color: white; }
-  .red-yellow.open:hover {
-    background-image: -webkit-linear-gradient(top, #c9302c, #c9302c 50%, #ec971f 50%);
-    background-image: linear-gradient(to bottom, #c9302c, #c9302c 50%, #ec971f 50%);
-    color: white; }
 
 .red-yellow.marked {
   background-image: -webkit-linear-gradient(top, #761c19, #761c19 50%, #985f0d 50%);
   background-image: linear-gradient(to bottom, #761c19, #761c19 50%, #985f0d 50%);
   color: white; }
 
-.red-yellow.skipped {
-  background-image: -webkit-linear-gradient(top, #eba5a3, #eba5a3 50%, #f8d9ac 50%);
-  background-image: linear-gradient(to bottom, #eba5a3, #eba5a3 50%, #f8d9ac 50%);
+.red-yellow.skipped, .red-yellow.disabled {
+  background-image: -webkit-linear-gradient(top, #f4cecd, #f4cecd 50%, #fceedb 50%);
+  background-image: linear-gradient(to bottom, #f4cecd, #f4cecd 50%, #fceedb 50%);
+  color: white;
+  opacity: 1; }
+
+.green-blue.open.markedLinkedRowIndex0 {
+  background-image: -webkit-linear-gradient(top, #5cb85c, #5cb85c 50%, #9fc4e4 50%);
+  background-image: linear-gradient(to bottom, #5cb85c, #5cb85c 50%, #9fc4e4 50%);
   color: white; }
 
-.green-blue.open {
+.green-blue.open.markedLinkedRowIndex1 {
+  background-image: -webkit-linear-gradient(top, #c7e6c7, #c7e6c7 50%, #337ab7 50%);
+  background-image: linear-gradient(to bottom, #c7e6c7, #c7e6c7 50%, #337ab7 50%);
+  color: white; }
+
+.green-blue.open.markedLinkedRowIndex0-markedLinkedRowIndex1 {
   background-image: -webkit-linear-gradient(top, #5cb85c, #5cb85c 50%, #337ab7 50%);
   background-image: linear-gradient(to bottom, #5cb85c, #5cb85c 50%, #337ab7 50%);
   color: white; }
-  .green-blue.open:hover {
-    background-image: -webkit-linear-gradient(top, #449d44, #449d44 50%, #285f8f 50%);
-    background-image: linear-gradient(to bottom, #449d44, #449d44 50%, #285f8f 50%);
-    color: white; }
 
 .green-blue.marked {
   background-image: -webkit-linear-gradient(top, #255625, #255625 50%, #122a3f 50%);
   background-image: linear-gradient(to bottom, #255625, #255625 50%, #122a3f 50%);
   color: white; }
 
-.green-blue.skipped {
-  background-image: -webkit-linear-gradient(top, #a3d7a3, #a3d7a3 50%, #77acd9 50%);
-  background-image: linear-gradient(to bottom, #a3d7a3, #a3d7a3 50%, #77acd9 50%);
-  color: white; }
+.green-blue.skipped, .green-blue.disabled {
+  background-image: -webkit-linear-gradient(top, #c7e6c7, #c7e6c7 50%, #9fc4e4 50%);
+  background-image: linear-gradient(to bottom, #c7e6c7, #c7e6c7 50%, #9fc4e4 50%);
+  color: white;
+  opacity: 1; }
 
 .modal-body {
   max-height: calc(100vh - 78px);
